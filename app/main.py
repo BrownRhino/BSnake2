@@ -34,7 +34,7 @@ def start():
 def move():
     data = bottle.request.json
     for key in data.keys():
-    	print("KEY:  ",key,"\tDATA:   ",data[key])
+    	print("\nKEY:  ",key,"\tDATA:   ",data[key])
     # TODO: Do things with data
     directions = ['up', 'down', 'left', 'right']
 
