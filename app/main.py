@@ -34,7 +34,8 @@ def start():
 def move():
     data = bottle.request.json
     for key in data.keys():
-    	print("\nKEY:  ",key,"\tDATA:   ",data[key])
+    	print("KEY:  ",key)
+		print("DATA:   ",data[key])
     # TODO: Do things with data
     directions = ['up', 'down', 'left', 'right']
 
@@ -44,7 +45,7 @@ def move():
     		break
     print("Our Snakes Stats:")
     print(val)
-    print("\n")
+    print()
     return {
         'move': 'up',
         'taunt': 'battlesnake-python!'
