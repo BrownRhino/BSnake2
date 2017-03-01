@@ -33,16 +33,18 @@ def start():
 @bottle.post('/move')
 def move():
     data = bottle.request.json
-	for key in data.keys():
-		print(key)
+    for key in data.keys():
+    	print("KEY:  ",key,"\tDATA:   ",data[key])
     # TODO: Do things with data
     directions = ['up', 'down', 'left', 'right']
 
-	id=data['you']
-	for val in data['snakes']:
-		if val['id']==id:
-			break
-	print(val)
+    id=data['you']
+    for val in data['snakes']:
+    	if val['id']==id:
+    		break
+    print("Our Snakes Stats:")
+    print(val)
+    print("\n")
     return {
         'move': 'up',
         'taunt': 'battlesnake-python!'
