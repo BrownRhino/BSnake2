@@ -84,7 +84,10 @@ def move():
 	
 	print("Head location")
 	print(us['coords'][0])
-	path=PQ.aStar(us['coords'][0],food[0])
+	print("Path Exists?")
+	path=PQ.isReachable(us['coords'][0],food[0],obstacles)
+	print()
+	path=PQ.aStar(us['coords'][0],food[0],obstacles)
 	print("Path to Food?:")
 	print(path)
 	print()
