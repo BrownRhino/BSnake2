@@ -111,7 +111,7 @@ def move():
 				go='left'
 
 	else:
-		obstacles.remove(us['coords'][-1]) #I THINK WE SHOULD REMOVE THE TAILS OF ALL SNAKES FROM OBSTACLES
+		obstacles.remove(tuple(us['coords'][-1])) #I THINK WE SHOULD REMOVE THE TAILS OF ALL SNAKES FROM OBSTACLES
 		path=PQ.isReachable(us['coords'][0],us['coords'][-1],obstacles)
 		print("Is there a path to our tail?")
 		print(path)
