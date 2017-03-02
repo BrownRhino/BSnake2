@@ -89,11 +89,11 @@ def reconstruct_path(came_from, start, goal):
     while current != start:
         current = came_from[current]
         path.append(current)
-    path.append(start) # optional
+#   path.append(start) # optional
     path.reverse() # optional
     return path		
 		
-def aStar(lstart,lgoal):
+def aStar(lstart,lgoal,obstacles):
 	start=tuple(lstart)
 	goal=tuple(lgoal)
 	#Initializing variables to find a path from start to goal
@@ -115,7 +115,7 @@ def aStar(lstart,lgoal):
 			break
 				
 		for next in neighbors[current]:
-			#if space is occupied then continue!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			if next in obstacles: continue
 			new_cost = cost[current] + 1			
 			if next not in cost or new_cost < cost[next]:
 				cost[next] = new_cost
@@ -130,7 +130,7 @@ def aStar(lstart,lgoal):
 		return []
 
 	
-def isReachable(lstart,lgoal):
+def isReachable(lstart,lgoal,obstacles):
 	start=tuple(lstart)
 	goal=tuple(lgoal)
 	#Initializing variables to find a path from start to goal
@@ -142,8 +142,10 @@ def isReachable(lstart,lgoal):
 	#Now we begin finding the path
 	cost[start]=0
 	
-	#Check if goal is has a obstruction in it!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
+	#Check if goal is has a obstruction in it
+	if goal in obstacles: return False
+
+
 	while queue: #changed so will exit when queue is empty
 		current = queue.get()
 		
@@ -151,10 +153,10 @@ def isReachable(lstart,lgoal):
 			path_exists = True
 			break
 		
-		#if goal in neighbors[current] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if goal in neighbors[current]: return True
 		
 		for next in neighbors[current]:
-			#if space is occupied then continue!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			if next in obstacles: continue
 			new_cost = cost[current] + 1			
 			if next not in cost or new_cost < cost[next]:
 				cost[next] = new_cost
