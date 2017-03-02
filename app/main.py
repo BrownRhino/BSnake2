@@ -68,6 +68,7 @@ def move():
 		opposing_snake['size']=len(val['coords'])
 		enemies.append(opposing_snake)
 
+	start=us['coords'][0]
 	print("Our Snake's Stats:")
 	print(us)
 	print()
@@ -93,8 +94,20 @@ def move():
 	print(path)
 	print()
 	
+	finish=path[1]
+	if(start[0]-finish[0])==0:
+		if start[1]<finish[1]:
+			go='down'
+		else:
+			go='up'
+	else:
+		if(start[0]<finish[0]):
+			go='right'
+		else:
+			go='left'
+	
 	return {
-		'move': 'up',
+		'move': go,
 		'taunt': 'battlesnake-python!'
 	}
 
