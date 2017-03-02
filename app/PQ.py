@@ -81,7 +81,7 @@ class PriorityQueue:
 		
 
 def heuristic(p,q):
-	return sqrt(((p[0]-q[0])**2) + ((p[1]-q[1])**2))
+	return (((p[0]-q[0])**2) + ((p[1]-q[1])**2))**(0.5)
 
 def reconstruct_path(came_from, start, goal):
     current = goal
