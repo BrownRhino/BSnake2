@@ -85,7 +85,7 @@ def move():
 	
 	print("Head location")
 	print(us['coords'][0])
-	print("Path Exists?")
+	print("Path to Food Exists?")
 	path=PQ.isReachable(us['coords'][0],food[0],obstacles)
 	print(path)
 	print()
@@ -93,7 +93,7 @@ def move():
 	go = 'right'
 	if path:
 		path=PQ.aStar(us['coords'][0],food[0],obstacles)
-		print("Path to Food?:")
+		print("Path to Food:")
 		print(path)
 		print()
 	
@@ -109,7 +109,31 @@ def move():
 			else:
 				go='left'
 
-		
+	else:
+		obstacles.remove(us['coords'][-1]) #I THINK WE SHOULD REMOVE THE TAILS OF ALL SNAKES FROM OBSTACLES
+		path=PQ.isReachable(us['coords'][0],us['coords'][-1],obstacles)
+		print("Is there a path to our tail?")
+		print(path)
+		print()
+		if path:
+			path=PQ.aStar(us['coords'][0],us['coords'][-1],obstacles)
+			print("Path to Tail:")
+			print(path)
+			print()
+
+			finish=path[1]
+			if(start[0]-finish[0])==0:
+				if start[1]<finish[1]:
+					go='down'
+				else:
+					go='up'
+			else:
+				if(start[0]<finish[0]):
+					go='right'
+				else:
+					go='left'
+
+			
 	return {
 		'move': go,
 		'taunt': 'battlesnake-python!'
