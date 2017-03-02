@@ -54,7 +54,7 @@ def move():
 	us={}
 	for val in data['snakes']:
 		for postn in val["coords"]:
-			obstacles.append(postn)	
+			obstacles.append(tuple(postn))	
 		if val['id']==id:
 			us=val
 			continue
