@@ -33,12 +33,14 @@ def start():
 @bottle.post('/move')
 def move():
 	data = bottle.request.json
-	for key in data.keys():
-		print("KEY:  ",key)
-		print("DATA:   ",data[key])
+#	for key in data.keys():
+#		print("KEY:  ",key)
+#		print("DATA:   ",data[key])
     # TODO: Do things with data
 	directions = ['up', 'down', 'left', 'right']
 
+	#Where is the food located on the board
+	food=data['food']
 
 	#us: Contains information about our snake.  Assigned in the for loop below using the id of the snake
 	id=data['you']
