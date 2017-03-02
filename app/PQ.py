@@ -98,7 +98,7 @@ def aStar(start,goal):
 	queue = PriorityQueue()
 	queue.put(start,0)
 	came_from ={}
-	cost={}	#tells us the cost so far from start to whatever node is defined in the key.  Ex.  cost[Detroit]=5 means the cost from start to Detroit is 5.
+	cost={}	#tells us the cost so far from start to whatever node is defined in the key.  Ex. cost[Detroit]=5 means the cost from start to Detroit is 5.
 	path_exists = False
 	
 	#Now we begin finding the path
@@ -122,8 +122,9 @@ def aStar(start,goal):
 				came_from[next] = current
 
 	if path_exists:
-		path = reconstruct_path(came_from,start,goal)
-		return path 
+#		path = reconstruct_path(came_from,start,goal)
+#		return path
+		return path_exist
 	else:
 		return []
 
