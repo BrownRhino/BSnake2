@@ -86,6 +86,7 @@ def move():
 	print(us['coords'][0])
 	print("Path Exists?")
 	path=PQ.isReachable(us['coords'][0],food[0],obstacles)
+	print(path)
 	print()
 	path=PQ.aStar(us['coords'][0],food[0],obstacles)
 	print("Path to Food?:")
