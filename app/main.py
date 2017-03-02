@@ -51,6 +51,7 @@ def move():
 	#obstacle: array will contain the locations of the board occupied by snakes (incl. yourself)
 	obstacles=[]
     
+	us={}
 	for val in data['snakes']:
 		obstacles.append(val["coords"])	
 		if val['id']==id:
@@ -58,7 +59,7 @@ def move():
 			continue
 		#Now that we know the snake isn't ours, it must be an enemy snake so we add them to the opposing snake structure
 		opposing_snake={}
-		opposing_snake['id']=val[id]
+		opposing_snake['id']=val['id']
 		opposing_snake['head']=val["coords"][0]
 		opposing_snake['tail']=val["coords"][-1]
 		opposing_snake["hp"]=val["health_points"]
@@ -66,7 +67,7 @@ def move():
 		enemies.append(opposing_snake)
 
 	print("Our Snake's Stats:")
-	print(val)
+	print(us)
 	print()
 	print("Obstacles:")
 	print(obstacles)
