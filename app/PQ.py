@@ -131,7 +131,7 @@ def aStar(lstart,lgoal):
 		return []
 
 	
-def isReachable(lstart,lfinish):
+def isReachable(lstart,lgoal):
 	start=tuple(lstart)
 	goal=tuple(lgoal)
 	#Initializing variables to find a path from start to goal
