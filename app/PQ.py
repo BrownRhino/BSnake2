@@ -141,7 +141,6 @@ def isReachable(lstart,lgoal):
 	path_exists = False
 	
 	#Now we begin finding the path
-	came_from[start]=None
 	cost[start]=0
 	
 	#Check if goal is has a obstruction in it!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
