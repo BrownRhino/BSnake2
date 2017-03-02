@@ -75,14 +75,15 @@ def move():
 	print("Obstacles:")
 	print(obstacles)
 	print()
+	print("Tail Location:")
+	print(us['coords'][-1])
+	print()
 	print("Enemy Snakes:")
 	print(enemies)
 	print()
 	print("Food:")
 	print(food[0])
 	print()
-	
-	
 	print("Head location")
 	print(us['coords'][0])
 	print("Path to Food Exists?")
