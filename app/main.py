@@ -32,24 +32,50 @@ def start():
 
 @bottle.post('/move')
 def move():
-    data = bottle.request.json
-    for key in data.keys():
-    	print("KEY:  ",key)
-    	print("DATA:   ",data[key])
+	data = bottle.request.json
+	for key in data.keys():
+		print("KEY:  ",key)
+		print("DATA:   ",data[key])
     # TODO: Do things with data
-    directions = ['up', 'down', 'left', 'right']
+	directions = ['up', 'down', 'left', 'right']
 
-    id=data['you']
-    for val in data['snakes']:
-    	if val['id']==id:
-    		break
-    print("Our Snakes Stats:")
-    print(val)
-    print()
-    return {
-        'move': 'up',
-        'taunt': 'battlesnake-python!'
-    }
+
+	#us: Contains information about our snake.  Assigned in the for loop below using the id of the snake
+	id=data['you']
+	
+	#enemies: dictionary contains snake's id as the key which refers to a list containing the following: head position, body position and its size
+	enemies=[]
+
+	#obstacle: array will contain the locations of the board occupied by snakes (incl. yourself)
+	obstacles=[]
+    
+	for val in data['snakes']:
+		obstacles.append(val["coords"])	
+		if val['id']==id:
+			us=val
+			continue
+		#Now that we know the snake isn't ours, it must be an enemy snake so we add them to the opposing snake structure
+		opposing_snake={}
+		opposing_snake['id']=val[id]
+		opposing_snake['head']=val["coords"][0]
+		opposing_snake['tail']=val["coords"][-1]
+		opposing_snake["hp"]=val["health_points"]
+		opposing_snake["coords"]=val["coords"]
+		enemies.append(opposing_snake)
+
+	print("Our Snakes Stats:")
+	print(val)
+	print()
+	print("Obstacles:")
+	print(obstacle)
+	print()
+	print("Enemy Snakes:")
+	print(enemies)
+	print()
+	return {
+		'move': 'up',
+		'taunt': 'battlesnake-python!'
+	}
 
 
 # Expose WSGI app (so gunicorn can find it)
