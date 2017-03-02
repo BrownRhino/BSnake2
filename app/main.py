@@ -1,7 +1,7 @@
 import bottle
 import os
 import random
-
+import PQ
 
 @bottle.route('/static/<path:path>')
 def static(path):
@@ -80,6 +80,12 @@ def move():
 	print("Food:")
 	print(food)
 	print()
+	
+	path=PQ.astar(us['coords'][0],food[0])
+	print("Path to Food:")
+	print(path)
+	print()
+	
 	return {
 		'move': 'up',
 		'taunt': 'battlesnake-python!'
