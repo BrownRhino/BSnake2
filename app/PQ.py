@@ -107,7 +107,7 @@ def aStar(lstart,lgoal,obstacles):
 	came_from[start]=None
 	cost[start]=0
 	
-	while queue: #changed so will exit when queue is empty
+	while not queue.empty(): #changed so will exit when queue is empty
 		current = queue.get()
         
 		if current == goal:
@@ -146,7 +146,7 @@ def isReachable(lstart,lgoal,obstacles):
 	if goal in obstacles: return False
 
 
-	while queue: #changed so will exit when queue is empty
+	while not queue.empty(): #changed so will exit when queue is empty
 		current = queue.get()
 		
 		if current == goal:

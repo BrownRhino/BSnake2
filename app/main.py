@@ -89,23 +89,27 @@ def move():
 	path=PQ.isReachable(us['coords'][0],food[0],obstacles)
 	print(path)
 	print()
-	path=PQ.aStar(us['coords'][0],food[0],obstacles)
-	print("Path to Food?:")
-	print(path)
-	print()
+
+	go = 'right'
+	if path:
+		path=PQ.aStar(us['coords'][0],food[0],obstacles)
+		print("Path to Food?:")
+		print(path)
+		print()
 	
-	finish=path[1]
-	if(start[0]-finish[0])==0:
-		if start[1]<finish[1]:
-			go='down'
+		finish=path[1]
+		if(start[0]-finish[0])==0:
+			if start[1]<finish[1]:
+				go='down'
+			else:
+				go='up'
 		else:
-			go='up'
-	else:
-		if(start[0]<finish[0]):
-			go='right'
-		else:
-			go='left'
-	
+			if(start[0]<finish[0]):
+				go='right'
+			else:
+				go='left'
+
+		
 	return {
 		'move': go,
 		'taunt': 'battlesnake-python!'
