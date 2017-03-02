@@ -81,7 +81,7 @@ def move():
 	print(food)
 	print()
 	
-	path=PQ.astar(us['coords'][0],food[0])
+	path=PQ.aStar(us['coords'][0],food[0])
 	print("Path to Food:")
 	print(path)
 	print()
