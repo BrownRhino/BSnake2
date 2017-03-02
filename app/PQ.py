@@ -124,9 +124,8 @@ def aStar(lstart,lgoal):
 				came_from[next] = current
 
 	if path_exists:
-#		path = reconstruct_path(came_from,start,goal)
-#		return path
-		return path_exists
+		path = reconstruct_path(came_from,start,goal)
+		return path
 	else:
 		return []
 
