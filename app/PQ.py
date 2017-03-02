@@ -93,7 +93,9 @@ def reconstruct_path(came_from, start, goal):
     path.reverse() # optional
     return path		
 		
-def aStar(start,goal):
+def aStar(lstart,lgoal):
+	start=tuple(lstart)
+	goal=tuple(lgoal)
 	#Initializing variables to find a path from start to goal
 	queue = PriorityQueue()
 	queue.put(start,0)
@@ -129,7 +131,9 @@ def aStar(start,goal):
 		return []
 
 	
-def isReachable(start,finish):
+def isReachable(lstart,lfinish):
+	start=tuple(lstart)
+	goal=tuple(lgoal)
 	#Initializing variables to find a path from start to goal
 	queue = PriorityQueue()
 	queue.put(start,0)
