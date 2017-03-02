@@ -65,11 +65,11 @@ def move():
 		opposing_snake["coords"]=val["coords"]
 		enemies.append(opposing_snake)
 
-	print("Our Snakes Stats:")
+	print("Our Snake's Stats:")
 	print(val)
 	print()
 	print("Obstacles:")
-	print(obstacle)
+	print(obstacles)
 	print()
 	print("Enemy Snakes:")
 	print(enemies)
