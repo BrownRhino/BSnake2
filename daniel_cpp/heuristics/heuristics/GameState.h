@@ -14,7 +14,7 @@ public:
 	GameState( GameState &gs);
 	~GameState();
 
-	std::vector<GameState> getMoves(bool ourSnake);
+	std::vector<GameState> *getMoves(bool ourSnake);
 	
 	int calcAccessibleArea(int snake, int turnFudgeFactor);
 	int distanceToClosestFood(int snake);
@@ -42,7 +42,7 @@ private:
 
 	void runDijkstra(int snake);
 
-	bool checkIfKilled( Snake snake);
+	bool checkIfKilled( int snake);
 	void updateFood(Snake &snake);
 	void updateSnakes();
 	void moveSnakes(std::vector<Direction> moves);

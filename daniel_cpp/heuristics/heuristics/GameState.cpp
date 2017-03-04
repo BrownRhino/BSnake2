@@ -112,10 +112,10 @@ std::vector<Direction> GameState::checkDirections(int snakeNum) {
 	if (y < m_ySize && (m_costs[x][y] < INT_MAX || m_ttl[x][y] == 1)) {
 		directions.push_back(DOWN);
 	}
-	// down
+	// up
 	x = head.x;
-	y = head.y + 1;
-	if (y <= 0 && (m_costs[x][y] < INT_MAX || m_ttl[x][y] == 1)) {
+	y = head.y - 1;
+	if (y >= 0 && (m_costs[x][y] < INT_MAX || m_ttl[x][y] == 1)) {
 		directions.push_back(UP);
 	}
 
@@ -152,22 +152,24 @@ std::vector< std::vector<Direction>> GameState::pickMoves(int snake) {
 }
 
 //Gives a list of all possible game states, either for our snake, or all enemy snakes together.
-std::vector<GameState> GameState::getMoves(bool ourSnake)
+// ***CALLER MUST FREE RETURNED VECTOR***
+std::vector<GameState> *GameState::getMoves(bool ourSnake)
 {
-	std::vector<GameState> newMoves;
 	std::vector< std::vector<Direction>> moveList = pickMoves(ourSnake ? 0 : 1);
+	std::vector<GameState> *newMoves = new std::vector<GameState>();
+	newMoves->reserve(moveList.size());
 
 	for (unsigned int i = 0; i < moveList.size(); i++) {
-		newMoves.push_back(GameState(*this));
-		GameState *gs = &(newMoves.back());
-		gs->moveSnakes(moveList[i]);
-		gs->updateSnakes();
+		newMoves->emplace_back(*this);
+		GameState &gs = newMoves->back();
+		gs.moveSnakes(moveList[i]);
+		gs.updateSnakes();
 		for (int j = 0; j < MAX_SNAKES; j++) {
-			gs->runDijkstra(j);
+			gs.runDijkstra(j);
 		}
 	}
 
-	return std::vector<GameState>();
+	return newMoves;
 }
 
 class DijkstraCompare {
@@ -291,15 +293,15 @@ void GameState::printDijkstra(int snake)
 	}
 }
 
-bool GameState::checkIfKilled(Snake snake) {
+bool GameState::checkIfKilled(int snake) {
 	for (int i = 0; i < MAX_SNAKES; i++) {
 		Snake &otherSnake = m_snakes[i];
-		if (otherSnake.m_isAlive) {
-			GridPoint head = snake.m_snake[0];
+		if (otherSnake.m_isAlive && i != snake) {
+			GridPoint head = m_snakes[snake].m_snake[0];
 			for (unsigned int j = 0; j < otherSnake.m_snake.size(); j++) {
 				GridPoint bodySegment = otherSnake.m_snake[j];
 				if (bodySegment.x == head.x && bodySegment.y == head.y) {
-					if (otherSnake.m_snake.size() >= snake.m_snake.size()) {
+					if (otherSnake.m_snake.size() >= m_snakes[snake].m_snake.size()) {
 						return true;
 					}
 				}
@@ -324,9 +326,8 @@ void GameState::updateSnakes()
 {
 	bool nowDead[MAX_SNAKES] = { 0 };
 	for (int i = 0; i < MAX_SNAKES; i++) {
-		Snake &snake = m_snakes[i];
-		if (snake.m_isAlive) {
-			nowDead[i] = checkIfKilled(snake);			
+		if (m_snakes[i].m_isAlive) {
+			nowDead[i] = checkIfKilled(i);			
 		}
 	}
 	for (int i = 0; i < MAX_SNAKES; i++) {
@@ -342,7 +343,7 @@ void GameState::updateSnakes()
 	}
 
 	for (int i = 0; i < m_xSize; i++) {
-		for (int j = 0; j < m_ySize; i++) {
+		for (int j = 0; j < m_ySize; j++) {
 			m_ttl[i][j] = -1;
 			m_costs[i][j] = 1;
 		}
@@ -354,7 +355,7 @@ void GameState::updateSnakes()
 				int x = snake.m_snake[j].x;
 				int y = snake.m_snake[j].y;
 				m_ttl[x][y] = snake.m_snake.size() - j;
-				m_costs[i][j] = INT_MAX;
+				m_costs[x][y] = INT_MAX;
 			}
 		}
 	}

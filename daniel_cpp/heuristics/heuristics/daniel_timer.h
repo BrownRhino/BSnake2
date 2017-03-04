@@ -67,6 +67,7 @@ public:
 	{
 #ifdef WIN32
 		time(&start_time);
+		GetSystemTime(&ms_time);
 #else
 		times(&start_time);
 #endif
