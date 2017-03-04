@@ -6,20 +6,20 @@ class GameState;
 
 namespace SnakeHeuristics
 {
-	int calcHeuristic(GameState &gs);
+	int calcHeuristic(const GameState &gs);
 
-	int hungry(GameState& gs);
+	int hungry(const GameState& gs);
 
-	int opertunisticEat(GameState &gs);
+	int opertunisticEat(const GameState &gs);
 
-	int relativeAreas(GameState& gs);
+	int relativeAreas(const GameState& gs);
 
-	int ourArea(GameState& gs);
+	int ourArea(const GameState& gs);
 
-	int enemyDeaths(GameState& gs);
+	int enemyDeaths(const GameState& gs);
 
-	int gameLoss(GameState& gs);
+	int gameLoss(const GameState& gs);
 
-	int gameWin(GameState& gs);
+	int gameWin(const GameState& gs);
 }
 

@@ -10,6 +10,70 @@
 #include <unordered_set>
 #include <string>
 #include <sstream>
+#include "misc.h"
+
+
+int hungry(GameState& gs) {
+	Snake us = gs.getSnake(0);
+	int distanceToFood = gs.distanceToClosestFood(0);
+	int foodDelta = us.m_health - distanceToFood;
+	if (foodDelta > 20) {
+		return 0;
+	}
+	else {
+		return foodDelta * (foodDelta < 5 ? 100 : 20);
+	}
+}
+
+int opertunisticEat(GameState &gs) {
+	return (gs.distanceToClosestFood(0) < 2) ? 200 : 0;
+}
+
+int relativeAreas(GameState& gs)
+{
+	int ourArea = gs.calcAccessibleArea(0, 0);
+	double averageEnemyArea = 0;
+	for (int i = 1; i < gs.numSnakes(); i++) {
+		averageEnemyArea += gs.calcAccessibleArea(i, 0);
+	}
+	averageEnemyArea /= (gs.numSnakes());
+	std::cout << "Ours:" << ourArea << " Num Enemies:" << gs.numSnakes() << "Total area:" << averageEnemyArea*gs.numSnakes() << " Average area:" << averageEnemyArea << std::endl;
+	return (int)(ourArea - averageEnemyArea) * 100;
+}
+
+int ourArea(GameState& gs) {
+	return gs.calcAccessibleArea(0, 0) * 5;
+}
+
+int enemyDeaths(GameState& gs)
+{
+	return gs.enemiesDiedThisTurn() * 100;
+}
+
+int gameLoss(GameState& gs)
+{
+	return gs.areWeDead() ? -1000000 : 0;
+}
+
+int gameWin(GameState& gs)
+{
+	return (!(gs.areWeDead()) && gs.numSnakes() == 0) ? 1000000 : 0;
+}
+
+int calcHeuristic(GameState &gs) {
+	int hungryVal = hungry(gs);
+	int operEat = opertunisticEat(gs);
+	int relArea = relativeAreas(gs);
+	int ourAreaVal = ourArea(gs);
+	int kills = enemyDeaths(gs);
+	int win = gameLoss(gs);
+	int loss = gameWin(gs);
+
+	std::cout << hungryVal << ", " << operEat << ", " << relArea << ", " << ourAreaVal << ", " << kills << ", " << win << ", " << loss << std::endl;
+	int value = hungryVal + operEat + relArea + ourAreaVal + kills + win + loss;
+
+	return value;
+}
 
 GameState::GameState() :
 	m_previousState(NULL),
@@ -156,15 +220,15 @@ std::vector< std::vector<Direction>> GameState::pickMoves(const int snake) {
 
 //Gives a list of all possible game states, either for our snake, or all enemy snakes together.
 // ***CALLER MUST FREE RETURNED VECTOR***
-std::vector<GameState> *GameState::getMoves(const bool ourSnake)
+std::vector< std::pair<GameState, Direction>> *GameState::getMoves(const bool ourSnake) 
 {
 	const std::vector< std::vector<Direction>> moveList = pickMoves(ourSnake ? 0 : 1);
-	std::vector<GameState> *newMoves = new std::vector<GameState>();
+	std::vector< std::pair<GameState, Direction>> *newMoves = new std::vector< std::pair<GameState, Direction>>();
 	newMoves->reserve(moveList.size());
 
 	for (unsigned int i = 0; i < moveList.size(); i++) {
-		newMoves->emplace_back(*this);
-		GameState &gs = newMoves->back();
+		newMoves->emplace_back(std::pair<GameState,Direction>(*this, moveList[i][0]));
+		GameState &gs = newMoves->back().first;
 		gs.moveSnakes(moveList[i]);
 		gs.updateSnakes();
 		for (int j = 0; j < MAX_SNAKES; j++) {
@@ -173,6 +237,11 @@ std::vector<GameState> *GameState::getMoves(const bool ourSnake)
 	}
 
 	return newMoves;
+}
+
+int GameState::calculateValue()
+{
+	 return calcHeuristic(*this); 
 }
 
 class DijkstraCompare {
@@ -253,7 +322,7 @@ void GameState::runDijkstra(const int snake)
 	}
 }
 
-bool GameState::partOfVoronoi(const int snake,const int turnFudgeFactor,const int x,const int y) const {
+bool GameState::partOfVoronoi(const int snake,const int turnFudgeFactor,const int x,const int y) {
 	if (!m_snakes[snake].m_isAlive) {
 		return false;
 	}

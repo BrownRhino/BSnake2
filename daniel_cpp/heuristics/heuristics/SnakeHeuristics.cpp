@@ -11,12 +11,12 @@ namespace SnakeHeuristics
 
 	int calcHeuristic(GameState &gs) {
 		int hungry = SnakeHeuristics::hungry(gs);
-		int operEat = opertunisticEat(gs);
-		int relArea = relativeAreas(gs);
+		int operEat = SnakeHeuristics::opertunisticEat(gs);
+		int relArea = SnakeHeuristics::relativeAreas(gs);
 		int ourArea = SnakeHeuristics::ourArea(gs);
-		int kills = enemyDeaths(gs);
-		int win = gameLoss(gs);
-		int loss = gameWin(gs);
+		int kills = SnakeHeuristics::enemyDeaths(gs);
+		int win = SnakeHeuristics::gameLoss(gs);
+		int loss = SnakeHeuristics::gameWin(gs);
 
 		std::cout << hungry << ", " << operEat << ", " << relArea << ", " << ourArea << ", " << kills << ", " << win << ", " << loss << std::endl;
 		int value = hungry + operEat + relArea + ourArea + kills + win + loss;

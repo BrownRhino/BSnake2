@@ -153,7 +153,6 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="heuristics.cpp" />
     <ClCompile Include="Snake.cpp" />
-    <ClCompile Include="SnakeHeuristics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="daniel_timer.h" />
@@ -161,7 +160,6 @@
     <ClInclude Include="heuristics.h" />
     <ClInclude Include="misc.h" />
     <ClInclude Include="Snake.h" />
-    <ClInclude Include="SnakeHeuristics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

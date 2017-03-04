@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include "misc.h"
+#include <limits.h>
 
 #define MAX_X 40
 #define MAX_Y 40

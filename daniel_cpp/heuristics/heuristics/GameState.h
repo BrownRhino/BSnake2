@@ -4,7 +4,7 @@
 #include <vector>
 #include "Snake.h"
 #include "misc.h"
-#include "SnakeHeuristics.h"
+//#include "SnakeHeuristics.h"
 #include <iostream>
 
 class GameState
@@ -15,8 +15,8 @@ public:
 	GameState(const GameState &gs);
 	~GameState();
 
-	std::vector<GameState> *getMoves(const bool ourSnake);
-	int calculateValue() { return SnakeHeuristics::calcHeuristic(*this); }
+	std::vector< std::pair<GameState, Direction>> * getMoves(const bool ourSnake);
+	int calculateValue();
 
 	int calcAccessibleArea(int snake, int turnFudgeFactor);
 	int distanceToClosestFood(int snake);
@@ -54,7 +54,7 @@ private:
 
 	void runDijkstra(const int snake);
 
-	bool partOfVoronoi(const int snake,const int turnFudgeFactor, const int x,  const int y) const;
+	bool partOfVoronoi(const int snake,const int turnFudgeFactor, const int x,  const int y);
 
 	bool checkIfKilled(const int snake);
 	void updateFood(Snake &snake);

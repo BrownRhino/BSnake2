@@ -1,3 +1,4 @@
-﻿  SnakeHeuristics.cpp
+﻿  GameState.cpp
+c:\dev\bsnake_git\bsnake2\daniel_cpp\heuristics\heuristics\gamestate.cpp(379): warning C4018: '<': signed/unsigned mismatch
   heuristics.vcxproj -> C:\dev\bsnake_git\BSnake2\daniel_cpp\heuristics\Debug\heuristics.exe
   heuristics.vcxproj -> C:\dev\bsnake_git\BSnake2\daniel_cpp\heuristics\Debug\heuristics.pdb (Full PDB)

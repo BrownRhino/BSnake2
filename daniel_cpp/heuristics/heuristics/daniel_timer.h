@@ -58,9 +58,12 @@ public:
 
 	long long millisecondsPassed() const
 	{
+#ifdef WIN32
 		SYSTEMTIME currentTime;
 		GetSystemTime(&currentTime);
 		return (currentTime.wSecond - ms_time.wSecond) * 1000 + (currentTime.wMilliseconds - ms_time.wMilliseconds);
+#endif
+		return 0;
 	}
 
 	void start()
