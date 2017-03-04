@@ -13,20 +13,22 @@
 
 GameState::GameState() :
 	m_previousState(NULL),
-	m_xSize ( 0),
-	m_ySize (0),
-	m_numSnakes (0)
+	m_xSize(0),
+	m_ySize(0),
+	m_numSnakes(0),
+	m_snakedDied(0)
 {
 }
 
 //Will deep copy the game state, but will not update pathfindig etc.
-GameState::GameState(GameState &gs) :
+GameState::GameState(const GameState &gs) :
 m_previousState(&gs),
 m_xSize(gs.m_xSize),
 m_ySize(gs.m_xSize),
 m_numSnakes(gs.m_numSnakes),
 m_food(gs.m_food),
-m_snakes(gs.m_snakes)
+m_snakes(gs.m_snakes),
+m_snakedDied(0)
 {
 }
 
@@ -77,6 +79,7 @@ GameState* GameState::buildFromCin()
 		std::cin >> x >> y;
 		gs->m_food.push_back(GridPoint(x, y));
 	}
+	gs->updateSnakes();
 	for (int s = 0; s < gs->m_numSnakes; s++) {
 		gs->runDijkstra(s);
 	}
@@ -84,14 +87,14 @@ GameState* GameState::buildFromCin()
 	return gs;
 }
 
-std::vector<Direction> GameState::checkDirections(int snakeNum) {
+std::vector<Direction> GameState::checkDirections(const int snakeNum) {
 	std::vector<Direction> directions;
-	Snake snake = m_snakes[snakeNum];
+	const Snake &snake = m_snakes[snakeNum];
 	if (!snake.m_isAlive) {
 		directions.push_back(NONE);
 		return directions;
 	}
-	GridPoint head = snake.m_snake[0];
+	const GridPoint &head = snake.m_snake[0];
 	int x;
 	int y;
 	// right
@@ -126,10 +129,10 @@ std::vector<Direction> GameState::checkDirections(int snakeNum) {
 	return directions;
 }
 
-std::vector< std::vector<Direction>> GameState::pickMoves(int snake) {
+std::vector< std::vector<Direction>> GameState::pickMoves(const int snake) {
 	std::vector< std::vector<Direction>> updatedMoves;
 
-	auto possibleMoves = checkDirections(snake);
+	const auto possibleMoves = checkDirections(snake);
 	if (snake == MAX_SNAKES - 1 || snake == 0) {
 		for (unsigned int i = 0; i < possibleMoves.size(); i++) {
 			std::vector<Direction> newMove;
@@ -139,7 +142,7 @@ std::vector< std::vector<Direction>> GameState::pickMoves(int snake) {
 		}
 	}
 	else {
-		auto otherMoves = pickMoves(snake + 1);
+		const auto otherMoves = pickMoves(snake + 1);
 		for (unsigned int i = 0; i < otherMoves.size(); i++) {
 			for (unsigned j = 0; j < possibleMoves.size(); j++) {
 				std::vector<Direction> newMove = otherMoves[i];
@@ -153,9 +156,9 @@ std::vector< std::vector<Direction>> GameState::pickMoves(int snake) {
 
 //Gives a list of all possible game states, either for our snake, or all enemy snakes together.
 // ***CALLER MUST FREE RETURNED VECTOR***
-std::vector<GameState> *GameState::getMoves(bool ourSnake)
+std::vector<GameState> *GameState::getMoves(const bool ourSnake)
 {
-	std::vector< std::vector<Direction>> moveList = pickMoves(ourSnake ? 0 : 1);
+	const std::vector< std::vector<Direction>> moveList = pickMoves(ourSnake ? 0 : 1);
 	std::vector<GameState> *newMoves = new std::vector<GameState>();
 	newMoves->reserve(moveList.size());
 
@@ -179,12 +182,12 @@ public:
 	}
 };
 
-inline int hashGridPoint(GridPoint p) {
+inline int hashGridPoint(const GridPoint p) {
 	return p.x << 8 | p.y;
 }
 
 
-void GameState::runDijkstra(int snake)
+void GameState::runDijkstra(const int snake)
 {
 	bool visited[(MAX_X << 8 | MAX_Y)+1] = { 0 };
 	std::priority_queue< std::pair< int, GridPoint>,
@@ -208,6 +211,7 @@ void GameState::runDijkstra(int snake)
 	startPoint = m_snakes[snake].m_snake[0];
 	queue.push(std::pair< int, GridPoint>(0, startPoint));
 	m_dijkstraCosts[snake][startPoint.x][startPoint.y] = 0;
+	m_dijkstraNumMoves[snake][startPoint.x][startPoint.y] = 0;
 	//set.insert(hashGridPoint(startPoint.start));
 
 	while (!queue.empty()) {
@@ -220,9 +224,11 @@ void GameState::runDijkstra(int snake)
 		uint8_t x = currentPoint.x;
 		uint8_t y = currentPoint.y;
 
+
 		//Check if this is first visit to v.
 		if (!visited[hashGridPoint(currentPoint)]) {
 			visited[hashGridPoint(currentPoint)] = true;
+			int moveNum = m_dijkstraNumMoves[snake][x][y];
 			for (int d = 0; d < 4; d++) {
 				uint8_t newX = x + directionsX[d];
 				uint8_t newY = y + directionsY[d];
@@ -230,10 +236,15 @@ void GameState::runDijkstra(int snake)
 				//set.count(hashGridPoint(newV)) == 0 &&
 				if (newX < m_xSize&&newY < m_ySize) {
 					//Valid point.
-					int newCost = m_costs[newX][newY] == INT_MAX ? INT_MAX-1 : currentCost + m_costs[newX][newY];
+					int additionalCost = m_costs[newX][newY];
+					if (additionalCost == INT_MAX && moveNum >= m_ttl[newX][newY]) {
+						additionalCost = 1;
+					}
+					int newCost = ((additionalCost == INT_MAX) ? INT_MAX : (currentCost + additionalCost));
 					if (!visited[hashGridPoint(nextPoint)] && newCost < m_dijkstraCosts[snake][newX][newY]) {
 						m_dijkstraPrev[snake][newX][newY] = currentPoint;
 						m_dijkstraCosts[snake][newX][newY] = newCost;
+						m_dijkstraNumMoves[snake][newX][newY] = moveNum + 1;
 						queue.push(std::pair< int, GridPoint>(newCost, nextPoint));
 					}
 				}
@@ -242,9 +253,77 @@ void GameState::runDijkstra(int snake)
 	}
 }
 
+bool GameState::partOfVoronoi(const int snake,const int turnFudgeFactor,const int x,const int y) const {
+	if (!m_snakes[snake].m_isAlive) {
+		return false;
+	}
+	const int ourSnakeMoves = m_dijkstraNumMoves[snake][x][y];
+	for (int i = 0; i < MAX_SNAKES; i++) {
+		if (m_snakes[i].m_isAlive && i != snake) {
+			if (m_dijkstraNumMoves[i][x][y] <= ourSnakeMoves + turnFudgeFactor) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 int GameState::calcAccessibleArea(int snake, int turnFudgeFactor)
 {
-	return 0;
+	bool visited[(MAX_X << 8 | MAX_Y) + 1] = { 0 };
+	int area = 0;
+	std::queue<GridPoint> queue;
+	queue.push(m_snakes[snake].m_snake[0]);
+	while (!queue.empty()) {
+		const GridPoint p = queue.front();
+		queue.pop();
+		if(!visited[hashGridPoint(p)]) {
+			visited[hashGridPoint(p)] = true;
+			area++;
+		}
+		else {
+			continue;
+		}
+		
+		const uint8_t x = p.x;
+		const uint8_t y = p.y;
+		for (int d = 0; d < 4; d++) {
+			uint8_t newX = x + directionsX[d];
+			uint8_t newY = y + directionsY[d];
+			if (newX < m_xSize&&newY < m_ySize) {
+				if (m_dijkstraCosts[snake][newX][newY] != INT_MAX && partOfVoronoi(snake, turnFudgeFactor, newX, newY)) {
+					GridPoint newPoint(newX, newY);
+					if (!visited[hashGridPoint(newPoint)]) {
+						queue.push(newPoint);
+					}
+				}
+			}
+		}
+	}
+	return area;
+}
+
+int GameState::distanceToClosestFood(const int snake)
+{
+	int bestFood = INT_MAX;
+	for (int i = 0; i < m_food.size(); i++) {
+		const GridPoint &food = m_food[i];
+		int cost = m_dijkstraCosts[snake][food.x][food.y];
+		if (cost < bestFood) {
+			bestFood = cost;
+		}
+	}
+	return bestFood;
+}
+
+int GameState::enemiesDiedThisTurn()
+{
+	return m_snakedDied - (m_snakes[0].m_isAlive ? 0 : 1);
+}
+
+int GameState::areWeDead()
+{
+	return !m_snakes[0].m_isAlive;
 }
 
 void GameState::printDijkstra(int snake)
@@ -293,13 +372,53 @@ void GameState::printDijkstra(int snake)
 	}
 }
 
-bool GameState::checkIfKilled(int snake) {
+void GameState::printTTL()
+{
+	for (int y = 0; y < m_ySize; y++) {
+		for (int x = 0; x < m_ySize; x++) {
+			int ttl = m_ttl[x][y];
+			std::wcout << (ttl > 9 || ttl < 0 ? "" : " ") << ttl << " ";
+		}
+		std::wcout << std::endl;
+	}
+}
+
+void GameState::printMoves(int snake)
+{
+	for (int y = 0; y < m_ySize; y++) {
+		for (int x = 0; x < m_ySize; x++) {
+			int moves = m_dijkstraNumMoves[snake][x][y];
+			std::wcout << (moves > 9 ? (moves > 99 ? "" : " ") : "  ") << moves;
+		}
+		std::wcout << std::endl;
+	}
+}
+
+void GameState::printVoronoi()
+{
+	for (int y = 0; y < m_ySize; y++) {
+		for (int x = 0; x < m_ySize; x++) {
+			std::cout << " ";
+			for (int s = 0; s < MAX_SNAKES; s++) {
+				if (partOfVoronoi(s, 0, x, y)) {
+					std::cout  << s;
+				}
+			}
+			std::cout << ",";
+		}
+		std::wcout << std::endl;
+	}
+}
+
+
+
+bool GameState::checkIfKilled(const int snake) {
 	for (int i = 0; i < MAX_SNAKES; i++) {
-		Snake &otherSnake = m_snakes[i];
+		const Snake &otherSnake = m_snakes[i];
 		if (otherSnake.m_isAlive && i != snake) {
-			GridPoint head = m_snakes[snake].m_snake[0];
+			const GridPoint &head = m_snakes[snake].m_snake[0];
 			for (unsigned int j = 0; j < otherSnake.m_snake.size(); j++) {
-				GridPoint bodySegment = otherSnake.m_snake[j];
+				const GridPoint &bodySegment = otherSnake.m_snake[j];
 				if (bodySegment.x == head.x && bodySegment.y == head.y) {
 					if (otherSnake.m_snake.size() >= m_snakes[snake].m_snake.size()) {
 						return true;
@@ -312,10 +431,10 @@ bool GameState::checkIfKilled(int snake) {
 }
 
 void GameState::updateFood(Snake &snake) {
-	GridPoint head = snake.m_snake[0];
+	const GridPoint &head = snake.m_snake[0];
 	for (std::vector<GridPoint>::iterator food = m_food.begin(); food != m_food.end(); food++) {
 		if (food->x == head.x && food->y == head.y) {
-			m_food.erase(food);
+			food = m_food.erase(food);
 			snake.m_health = 100;
 			snake.m_snake.push_back(snake.m_snake.back());
 		}
@@ -333,6 +452,7 @@ void GameState::updateSnakes()
 	for (int i = 0; i < MAX_SNAKES; i++) {
 		if (nowDead[i]) {
 			m_snakes[i].m_isAlive = false;
+			m_snakedDied++;
 		}
 	}
 	for (int i = 0; i < MAX_SNAKES; i++) {
@@ -349,9 +469,9 @@ void GameState::updateSnakes()
 		}
 	}
 	for (int i = 0; i < MAX_SNAKES; i++) {
-		Snake snake = m_snakes[i];
+		const Snake &snake = m_snakes[i];
 		if (snake.m_isAlive) {
-			for (unsigned int j = 0; j < snake.m_snake.size(); j++) {
+			for (int j = (int)snake.m_snake.size()-1; j >=0 ; j--) {
 				int x = snake.m_snake[j].x;
 				int y = snake.m_snake[j].y;
 				m_ttl[x][y] = snake.m_snake.size() - j;
@@ -365,9 +485,9 @@ void GameState::moveSnakes(std::vector<Direction> moves)
 {
 	for (int i = 0; i < MAX_SNAKES; i++) {
 		Snake &snake = m_snakes[i];
-		Direction move = moves[i];
+		const Direction &move = moves[i];
 		if (move != NONE && move != DIE) {
-			GridPoint oldHead = snake.m_snake[0];
+			const GridPoint &oldHead = snake.m_snake[0];
 			GridPoint newHead;
 			switch (move) {
 			case UP:

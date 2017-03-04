@@ -11,15 +11,21 @@ class GameState
 public:
 	GameState();
 	static GameState *buildFromCin();
-	GameState( GameState &gs);
+	GameState( const GameState &gs);
 	~GameState();
 
-	std::vector<GameState> *getMoves(bool ourSnake);
+	std::vector<GameState> *getMoves(const bool ourSnake);
 	
 	int calcAccessibleArea(int snake, int turnFudgeFactor);
 	int distanceToClosestFood(int snake);
+	int enemiesDiedThisTurn();
+	int areWeDead();
 
 	void printDijkstra(int snake);
+	void printTTL();
+	void printMoves(int snake);
+
+	void printVoronoi();
 
 	void addSnakeTest(int snake);
 
@@ -27,7 +33,7 @@ public:
 private:
 	int m_xSize = MAX_X;
 	int m_ySize = MAX_Y;
-	GameState *m_previousState;
+	const GameState *m_previousState;
 
 	int m_numSnakes = MAX_SNAKES;
 	std::vector<Snake> m_snakes = std::vector<Snake>(MAX_SNAKES);
@@ -40,13 +46,17 @@ private:
 	int m_dijkstraNumMoves[MAX_SNAKES][MAX_X][MAX_Y];
 	int m_dijkstraCosts[MAX_SNAKES][MAX_X][MAX_Y];
 
-	void runDijkstra(int snake);
+	int m_snakedDied;
 
-	bool checkIfKilled( int snake);
+	void runDijkstra(const int snake);
+
+	bool partOfVoronoi(const int snake,const int turnFudgeFactor, const int x,  const int y) const;
+
+	bool checkIfKilled(const int snake);
 	void updateFood(Snake &snake);
 	void updateSnakes();
 	void moveSnakes(std::vector<Direction> moves);
 
-	std::vector<Direction> checkDirections(int snakeNum);
-	std::vector< std::vector<Direction>> pickMoves(int snake);	
+	std::vector<Direction> checkDirections(const int snakeNum);
+	std::vector< std::vector<Direction>> pickMoves(const int snake);	
 };

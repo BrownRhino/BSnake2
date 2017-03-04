@@ -1,12 +1,8 @@
-﻿  heuristics.cpp
-heuristics.cpp(15): warning C4244: 'initializing': conversion from '__int64' to 'unsigned long', possible loss of data
-heuristics.cpp(20): warning C4244: '=': conversion from '__int64' to 'unsigned long', possible loss of data
-heuristics.cpp(22): warning C4244: 'initializing': conversion from '__int64' to 'unsigned long', possible loss of data
-heuristics.cpp(26): warning C4018: '<': signed/unsigned mismatch
+﻿  GameState.cpp
   Generating code
-  16 of 704 functions ( 2.3%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+  2 of 723 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    9 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   heuristics.vcxproj -> C:\dev\bsnake_git\BSnake2\daniel_cpp\heuristics\Release\heuristics.exe
   heuristics.vcxproj -> C:\dev\bsnake_git\BSnake2\daniel_cpp\heuristics\Release\heuristics.pdb (Full PDB)
