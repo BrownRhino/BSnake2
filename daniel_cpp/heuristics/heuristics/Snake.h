@@ -1,7 +1,11 @@
 #pragma once
 
-#include "GameState.h"
+#include "misc.h"
 #include <vector>
+
+enum Direction;
+struct GridPoint;
+
 class Snake
 {
 public:
@@ -12,9 +16,9 @@ public:
 
 	int m_id;
 	int m_health;
-	int m_length;
 	bool m_isAlive;
 	std::vector<GridPoint> m_snake;
+	std::vector<int> m_ttl;
 
 };
 

@@ -152,11 +152,14 @@
   <ItemGroup>
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="heuristics.cpp" />
+    <ClCompile Include="Snake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="daniel_timer.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="heuristics.h" />
+    <ClInclude Include="misc.h" />
+    <ClInclude Include="Snake.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,34 +3,18 @@
 
 #include <vector>
 #include "Snake.h"
-
-#define MAX_X 40
-#define MAX_Y 40
-#define MAX_SNAKES 10
-
-enum Direction { UP, DOWN, RIGHT, LEFT };
-
-struct GridPoint {
-public:
-	GridPoint() : x(0), y(0) {}
-	GridPoint(uint8_t newX, uint8_t newY) : x(newX), y(newY) {}
-	uint8_t x = 0;
-	uint8_t y = 0;
-};
+#include "misc.h"
+#include <iostream>
 
 class GameState
 {
 public:
 	GameState();
+	static GameState *buildFromCin();
+	GameState( GameState &gs);
 	~GameState();
 
-	void buildFromCin();
-
-	void getMovesForSnake(int snake);
-	void moveSnake(int snake, Direction direction);
-	void getPossibleMoves(int *snakes, Direction* directions);
-
-	void runDijkstra(int snake);
+	std::vector<GameState> getMoves(bool ourSnake);
 	
 	int calcAccessibleArea(int snake, int turnFudgeFactor);
 	int distanceToClosestFood(int snake);
@@ -41,19 +25,28 @@ public:
 
 
 private:
-	uint8_t m_xSize = MAX_X;
-	uint8_t m_ySize = MAX_Y;
+	int m_xSize = MAX_X;
+	int m_ySize = MAX_Y;
+	GameState *m_previousState;
 
-	uint8_t m_numSnakes = MAX_SNAKES;
+	int m_numSnakes = MAX_SNAKES;
+	std::vector<Snake> m_snakes = std::vector<Snake>(MAX_SNAKES);
+	int m_ttl[MAX_X][MAX_Y];
 
-	bool checkIfKilled(const Snake & snake);
-	void updateSnakes();
-
-	Snake m_snakes[MAX_SNAKES];
+	std::vector<GridPoint> m_food;
 
 	int m_costs[MAX_X][MAX_Y];
 	GridPoint m_dijkstraPrev[MAX_SNAKES][MAX_X][MAX_Y];
 	int m_dijkstraNumMoves[MAX_SNAKES][MAX_X][MAX_Y];
 	int m_dijkstraCosts[MAX_SNAKES][MAX_X][MAX_Y];
-	
+
+	void runDijkstra(int snake);
+
+	bool checkIfKilled( Snake snake);
+	void updateFood(Snake &snake);
+	void updateSnakes();
+	void moveSnakes(std::vector<Direction> moves);
+
+	std::vector<Direction> checkDirections(int snakeNum);
+	std::vector< std::vector<Direction>> pickMoves(int snake);	
 };

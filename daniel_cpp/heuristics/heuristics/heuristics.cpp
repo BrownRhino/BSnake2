@@ -4,17 +4,23 @@
 #include "heuristics.h"
 #include "daniel_timer.h"
 #include <iostream>
+#include <sstream>
+
+
+void test() {
+	GameState *gs;
+	gs = GameState::buildFromCin();
+	Timer t;
+	t.start();
+	unsigned long time = t.millisecondsPassed();
+	std::cout << time << std::endl;
+	gs->printDijkstra(0);
+}
+
+
 int main()
 {
-	GameState gs;
-	Timer t;
-	gs.addSnakeTest(0);
-	t.start();
-	gs.runDijkstra(0);
-	unsigned long time = t.millisecondsPassed();
-	std::cout << time  << std::endl;
-	gs.printDijkstra(0);
-	//while (true);
+	test();
     return 0;
 }
 
