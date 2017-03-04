@@ -1,0 +1,8 @@
+int* minimax()
+{
+	
+}
+int main()
+{
+	
+}

@@ -143,7 +143,7 @@ def isReachable(lstart,lgoal,obstacles):
 	cost[start]=0
 	
 	#Check if goal is has a obstruction in it
-	if goal in obstacles: return False
+	if goal in obstacles: print("GOAL IS IN OBSTACLES!!!!!!");return False
 
 
 	while not queue.empty(): #changed so will exit when queue is empty
