@@ -32,7 +32,15 @@ void test() {
 	results->at(0).printDijkstra(0);
 	std::cout << "---------------" << std::endl;
 	for (int i = 0; i < results2->size(); i++) {
+		std::cout << results2->at(i).calculateValue() << std::endl;
 		results2->at(i).printDijkstra(0);
+		std::cout << std::endl;
+	}
+	std::cout << "---------------" << std::endl;
+	auto results3 = results2->back().getMoves(false);
+	for (int i = 0; i < results3->size(); i++) {
+		std::cout << results3->at(i).calculateValue() << std::endl;
+		results3->at(i).printDijkstra(0);
 		std::cout << std::endl;
 	}
 

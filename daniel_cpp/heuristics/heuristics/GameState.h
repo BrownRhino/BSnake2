@@ -4,6 +4,7 @@
 #include <vector>
 #include "Snake.h"
 #include "misc.h"
+#include "SnakeHeuristics.h"
 #include <iostream>
 
 class GameState
@@ -11,15 +12,18 @@ class GameState
 public:
 	GameState();
 	static GameState *buildFromCin();
-	GameState( const GameState &gs);
+	GameState(const GameState &gs);
 	~GameState();
 
 	std::vector<GameState> *getMoves(const bool ourSnake);
-	
+	int calculateValue() { return SnakeHeuristics::calcHeuristic(*this); }
+
 	int calcAccessibleArea(int snake, int turnFudgeFactor);
 	int distanceToClosestFood(int snake);
 	int enemiesDiedThisTurn();
 	int areWeDead();
+	int numSnakes() { return m_numSnakes; }
+	const Snake getSnake(int i) { return m_snakes[i]; }
 
 	void printDijkstra(int snake);
 	void printTTL();
@@ -27,7 +31,7 @@ public:
 
 	void printVoronoi();
 
-	void addSnakeTest(int snake);
+	//void addSnakeTest(int snake);
 
 
 private:

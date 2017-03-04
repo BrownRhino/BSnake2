@@ -306,14 +306,16 @@ int GameState::calcAccessibleArea(int snake, int turnFudgeFactor)
 int GameState::distanceToClosestFood(const int snake)
 {
 	int bestFood = INT_MAX;
+	GridPoint foodPoint(255,255);
 	for (int i = 0; i < m_food.size(); i++) {
 		const GridPoint &food = m_food[i];
 		int cost = m_dijkstraCosts[snake][food.x][food.y];
 		if (cost < bestFood) {
 			bestFood = cost;
+			foodPoint = GridPoint(food.x, food.y);
 		}
 	}
-	return bestFood;
+	return foodPoint.x == 255 ? INT_MAX : m_dijkstraNumMoves[snake][foodPoint.x][foodPoint.y];
 }
 
 int GameState::enemiesDiedThisTurn()
