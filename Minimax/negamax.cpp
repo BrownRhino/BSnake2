@@ -3,6 +3,9 @@
 #include "Meow_Mix.h"
 #include <algorithm>
 
+const int MIN_VAL = -1000000;
+const int MAX_VAL =  1000000;
+
 using namespace std;
 //negamax(const int& i);
 //int* negamax(const GameState& G, int max_depth, int current_depth, bool player)
@@ -73,7 +76,7 @@ int* negamax(const GameState& G, int max_depth, int current_depth, bool player)
 	int* best_move = &scoreandmove[1];
 	
 	
-	*best_score = std::numeric_limits<int>::min();
+	*best_score = MIN_VAL;
 	*best_move = -1;
 	std::vector<GameState> possible_moves=G.getMoves();
 	
@@ -166,7 +169,7 @@ int main()
 	test.set_id(100);
 	cout<<"id? "<<test.get_id()<<endl;
 
-	Node tree[7] = {{0,1,2},{0,2,3},{0,3,2},{1,10,3},{1,50,2},{1,23,3},{1,3,2}};
+	Node tree[7] = {{0,1,2},{0,2,3},{0,3,2},{1,100,3},{1,50,2},{1,23,3},{1,3,2}};
 	for(int i = 0; i<7; i++)
 		cout<<"Node["<<i<<"] = "<<tree[i].is_parent()<<", "<<tree[i].get_value()<<", "<<tree[i].get_move()<<endl;	
 	tree[0].set_id(0);
@@ -220,7 +223,7 @@ int main()
 	delete[] hope;
 */	
 	int* hope;
-	hope=abNegamax(combo[0], 100, 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+	hope=abNegamax(combo[0], 100, 0, MIN_VAL, MAX_VAL);
 	cout<<"Best Score is "<<hope[0]<<".\tBest Move is "<<hope[1]<<".\n";
 	delete[] hope;
 }
